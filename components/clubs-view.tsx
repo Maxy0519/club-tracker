@@ -12,6 +12,7 @@ import {
 
 import AddClubModal from "@/components/add-club-modal";
 import ClubCard from "@/components/club-card";
+import EditClubModal from "@/components/edit-club-modal";
 
 import { createClient } from "@/lib/supabase/client";
 
@@ -55,6 +56,11 @@ export default function ClubsView({
     addModalOpen,
     setAddModalOpen,
   ] = useState(false);
+
+  const [
+    editingClub,
+    setEditingClub,
+  ] = useState<Club | null>(null);
 
   const activeClubs =
     clubs.filter(
@@ -224,8 +230,154 @@ export default function ClubsView({
     return true;
   }
 
+  async function handleUpdateClub(
+    clubId: string,
+    updates: NewClub
+  ) {
+    const supabase =
+      createClient();
+
+    const {
+      data,
+      error,
+    } = await supabase
+      .from("clubs")
+      .update({
+        name:
+          updates.name,
+        organization:
+          updates.organization,
+        status:
+          updates.status,
+        category:
+          updates.category ?? null,
+        role:
+          updates.role ?? null,
+        instagram:
+          updates.instagram ?? null,
+        website:
+          updates.website ?? null,
+        description:
+          updates.description ?? null,
+        notes:
+          updates.notes ?? null,
+      })
+      .eq(
+        "id",
+        clubId
+      )
+      .eq(
+        "user_id",
+        userId
+      )
+      .select(
+        `
+          id,
+          name,
+          organization,
+          status,
+          category,
+          role,
+          instagram,
+          website,
+          description,
+          notes
+        `
+      )
+      .single();
+
+    if (error) {
+      console.error(
+        "Error updating club:",
+        error
+      );
+
+      return false;
+    }
+
+    const updatedClub: Club = {
+      id: data.id,
+      name: data.name,
+      organization:
+        data.organization as ClubOrganization,
+      status:
+        data.status as ClubStatus,
+      category:
+        data.category ?? undefined,
+      role:
+        data.role ?? undefined,
+      instagram:
+        data.instagram ?? undefined,
+      website:
+        data.website ?? undefined,
+      description:
+        data.description ?? undefined,
+      notes:
+        data.notes ?? undefined,
+    };
+
+    setClubs(
+      (currentClubs) =>
+        currentClubs.map(
+          (club) =>
+            club.id ===
+            clubId
+              ? updatedClub
+              : club
+        )
+    );
+
+    setEditingClub(null);
+
+    return true;
+  }
+
+  async function handleDeleteClub(
+    clubId: string
+  ) {
+    const supabase =
+      createClient();
+
+    const {
+      error,
+    } = await supabase
+      .from("clubs")
+      .delete()
+      .eq(
+        "id",
+        clubId
+      )
+      .eq(
+        "user_id",
+        userId
+      );
+
+    if (error) {
+      console.error(
+        "Error deleting club:",
+        error
+      );
+
+      return false;
+    }
+
+    setClubs(
+      (currentClubs) =>
+        currentClubs.filter(
+          (club) =>
+            club.id !==
+            clubId
+        )
+    );
+
+    setEditingClub(null);
+
+    return true;
+  }
+
   return (
     <>
+      {/* Page header */}
       <header className="mb-8 flex items-start justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
@@ -254,6 +406,7 @@ export default function ClubsView({
         </button>
       </header>
 
+      {/* Summary */}
       <section className="mb-8 flex gap-8 border-b border-zinc-800 pb-5">
         <div>
           <p className="text-2xl font-semibold">
@@ -276,6 +429,7 @@ export default function ClubsView({
         </div>
       </section>
 
+      {/* Search + filters */}
       <section className="mb-6 space-y-4">
         <div className="relative">
           <Search
@@ -363,6 +517,7 @@ export default function ClubsView({
         </p>
       </section>
 
+      {/* Club cards */}
       {filteredClubs.length >
       0 ? (
         <section className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
@@ -371,6 +526,9 @@ export default function ClubsView({
               <ClubCard
                 key={club.id}
                 club={club}
+                onEdit={
+                  setEditingClub
+                }
               />
             )
           )}
@@ -389,6 +547,7 @@ export default function ClubsView({
         </section>
       )}
 
+      {/* Add Club */}
       <AddClubModal
         open={addModalOpen}
         onClose={() =>
@@ -398,6 +557,26 @@ export default function ClubsView({
         }
         onAdd={
           handleAddClub
+        }
+      />
+
+      {/* Edit Club */}
+      <EditClubModal
+        club={editingClub}
+        open={
+          editingClub !==
+          null
+        }
+        onClose={() =>
+          setEditingClub(
+            null
+          )
+        }
+        onSave={
+          handleUpdateClub
+        }
+        onDelete={
+          handleDeleteClub
         }
       />
     </>

@@ -1,12 +1,14 @@
 import {
   ExternalLink,
   Globe,
+  Pencil,
 } from "lucide-react";
 
 import { Club } from "@/types/club";
 
 type ClubCardProps = {
   club: Club;
+  onEdit: (club: Club) => void;
 };
 
 function getInstagramUrl(instagram: string) {
@@ -26,6 +28,7 @@ function getInstagramUrl(instagram: string) {
 
 export default function ClubCard({
   club,
+  onEdit,
 }: ClubCardProps) {
   return (
     <article className="rounded-2xl border border-zinc-800 bg-zinc-900 p-5 transition hover:border-zinc-700">
@@ -73,33 +76,52 @@ export default function ClubCard({
         </div>
       )}
 
-      {(club.instagram || club.website) && (
-        <div className="mt-5 flex flex-wrap gap-2 border-t border-zinc-800 pt-4">
-          {club.instagram && (
-            <a
-              href={getInstagramUrl(club.instagram)}
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-zinc-400 transition hover:bg-zinc-800 hover:text-white"
-            >
-              <ExternalLink size={15} />
-              Instagram
-            </a>
-          )}
+      {club.notes && (
+        <div className="mt-5 rounded-xl bg-zinc-950 px-4 py-3">
+          <p className="text-xs font-medium text-zinc-500">
+            Notes
+          </p>
 
-          {club.website && (
-            <a
-              href={club.website}
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-zinc-400 transition hover:bg-zinc-800 hover:text-white"
-            >
-              <Globe size={15} />
-              Website
-            </a>
-          )}
+          <p className="mt-1 line-clamp-3 text-sm text-zinc-400">
+            {club.notes}
+          </p>
         </div>
       )}
+
+      <div className="mt-5 flex flex-wrap items-center gap-2 border-t border-zinc-800 pt-4">
+        {club.instagram && (
+          <a
+            href={getInstagramUrl(club.instagram)}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-zinc-400 transition hover:bg-zinc-800 hover:text-white"
+          >
+            <ExternalLink size={15} />
+            Instagram
+          </a>
+        )}
+
+        {club.website && (
+          <a
+            href={club.website}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-zinc-400 transition hover:bg-zinc-800 hover:text-white"
+          >
+            <Globe size={15} />
+            Website
+          </a>
+        )}
+
+        <button
+          type="button"
+          onClick={() => onEdit(club)}
+          className="ml-auto flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-zinc-400 transition hover:bg-zinc-800 hover:text-white"
+        >
+          <Pencil size={15} />
+          Edit
+        </button>
+      </div>
     </article>
   );
 }
