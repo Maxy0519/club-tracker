@@ -1,4 +1,6 @@
-export type ClubOrganization = "Baruch" | "Macaulay";
+export type ClubOrganization =
+  | "Baruch"
+  | "Macaulay";
 
 export type ClubStatus =
   | "Interested"
@@ -22,3 +24,5 @@ export type Club = {
   description?: string;
   notes?: string;
 };
+
+export type NewClub = Omit<Club, "id">;
