@@ -16,8 +16,13 @@ type ClubsViewProps = {
   clubs: Club[];
 };
 
-type OrganizationFilter = "All" | ClubOrganization;
-type StatusFilter = "All" | ClubStatus;
+type OrganizationFilter =
+  | "All"
+  | ClubOrganization;
+
+type StatusFilter =
+  | "All"
+  | ClubStatus;
 
 export default function ClubsView({
   clubs: initialClubs,
@@ -25,7 +30,8 @@ export default function ClubsView({
   const [clubs, setClubs] =
     useState<Club[]>(initialClubs);
 
-  const [search, setSearch] = useState("");
+  const [search, setSearch] =
+    useState("");
 
   const [organization, setOrganization] =
     useState<OrganizationFilter>("All");
@@ -50,11 +56,23 @@ export default function ClubsView({
         club.name
           .toLowerCase()
           .includes(normalizedSearch) ||
-        club.category
+        club.organization
           .toLowerCase()
           .includes(normalizedSearch) ||
-        club.role
+        club.status
           .toLowerCase()
+          .includes(normalizedSearch) ||
+        club.category
+          ?.toLowerCase()
+          .includes(normalizedSearch) ||
+        club.role
+          ?.toLowerCase()
+          .includes(normalizedSearch) ||
+        club.description
+          ?.toLowerCase()
+          .includes(normalizedSearch) ||
+        club.notes
+          ?.toLowerCase()
           .includes(normalizedSearch);
 
       const matchesOrganization =
@@ -71,7 +89,12 @@ export default function ClubsView({
         matchesStatus
       );
     });
-  }, [clubs, search, organization, status]);
+  }, [
+    clubs,
+    search,
+    organization,
+    status,
+  ]);
 
   function handleAddClub(club: Club) {
     setClubs((currentClubs) => [
@@ -79,8 +102,8 @@ export default function ClubsView({
       club,
     ]);
 
-    // Reset filters so the newly added club
-    // is immediately visible.
+    // Reset filters so the new club is
+    // immediately visible after creation.
     setSearch("");
     setOrganization("All");
     setStatus("All");
@@ -88,6 +111,7 @@ export default function ClubsView({
 
   return (
     <>
+      {/* Page header */}
       <header className="mb-8 flex items-start justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
@@ -101,7 +125,9 @@ export default function ClubsView({
 
         <button
           type="button"
-          onClick={() => setAddModalOpen(true)}
+          onClick={() =>
+            setAddModalOpen(true)
+          }
           className="flex shrink-0 items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-medium text-black transition hover:bg-zinc-200"
         >
           <Plus size={17} />
@@ -112,6 +138,7 @@ export default function ClubsView({
         </button>
       </header>
 
+      {/* Summary */}
       <section className="mb-8 flex gap-8 border-b border-zinc-800 pb-5">
         <div>
           <p className="text-2xl font-semibold">
@@ -134,6 +161,7 @@ export default function ClubsView({
         </div>
       </section>
 
+      {/* Search and filters */}
       <section className="mb-6 space-y-4">
         <div className="relative">
           <Search
@@ -153,6 +181,7 @@ export default function ClubsView({
         </div>
 
         <div className="flex flex-col gap-3 sm:flex-row">
+          {/* Organization filter */}
           <select
             value={organization}
             onChange={(event) =>
@@ -176,11 +205,13 @@ export default function ClubsView({
             </option>
           </select>
 
+          {/* Status filter */}
           <select
             value={status}
             onChange={(event) =>
               setStatus(
-                event.target.value as StatusFilter
+                event.target
+                  .value as StatusFilter
               )
             }
             className="rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-2.5 text-sm text-zinc-300 outline-none"
@@ -189,12 +220,20 @@ export default function ClubsView({
               All statuses
             </option>
 
-            <option value="Active">
-              Active
-            </option>
-
             <option value="Interested">
               Interested
+            </option>
+
+            <option value="Applying">
+              Applying
+            </option>
+
+            <option value="Applied">
+              Applied
+            </option>
+
+            <option value="Active">
+              Active
             </option>
 
             <option value="Inactive">
@@ -209,6 +248,7 @@ export default function ClubsView({
         </p>
       </section>
 
+      {/* Club cards */}
       {filteredClubs.length > 0 ? (
         <section className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
           {filteredClubs.map((club) => (
@@ -230,9 +270,12 @@ export default function ClubsView({
         </section>
       )}
 
+      {/* Add Club modal */}
       <AddClubModal
         open={addModalOpen}
-        onClose={() => setAddModalOpen(false)}
+        onClose={() =>
+          setAddModalOpen(false)
+        }
         onAdd={handleAddClub}
       />
     </>

@@ -24,12 +24,13 @@ export default function AddClubModal({
   const [organization, setOrganization] =
     useState<ClubOrganization>("Baruch");
   const [category, setCategory] = useState("");
-  const [role, setRole] = useState("Member");
+  const [role, setRole] = useState("");
   const [status, setStatus] =
     useState<ClubStatus>("Interested");
   const [instagram, setInstagram] = useState("");
   const [website, setWebsite] = useState("");
   const [description, setDescription] = useState("");
+  const [notes, setNotes] = useState("");
 
   if (!open) {
     return null;
@@ -39,11 +40,12 @@ export default function AddClubModal({
     setName("");
     setOrganization("Baruch");
     setCategory("");
-    setRole("Member");
+    setRole("");
     setStatus("Interested");
     setInstagram("");
     setWebsite("");
     setDescription("");
+    setNotes("");
   }
 
   function handleClose() {
@@ -51,7 +53,9 @@ export default function AddClubModal({
     onClose();
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  function handleSubmit(
+    event: FormEvent<HTMLFormElement>
+  ) {
     event.preventDefault();
 
     const trimmedName = name.trim();
@@ -64,12 +68,13 @@ export default function AddClubModal({
       id: crypto.randomUUID(),
       name: trimmedName,
       organization,
-      category: category.trim() || "Other",
-      role: role.trim() || "Member",
       status,
-      description: description.trim() || undefined,
+      category: category.trim() || undefined,
+      role: role.trim() || undefined,
       instagram: instagram.trim() || undefined,
       website: website.trim() || undefined,
+      description: description.trim() || undefined,
+      notes: notes.trim() || undefined,
     };
 
     onAdd(newClub);
@@ -120,6 +125,7 @@ export default function AddClubModal({
           onSubmit={handleSubmit}
           className="space-y-5 p-6"
         >
+          {/* Club name */}
           <div>
             <label
               htmlFor="club-name"
@@ -141,6 +147,7 @@ export default function AddClubModal({
             />
           </div>
 
+          {/* Organization + status */}
           <div className="grid gap-5 sm:grid-cols-2">
             <div>
               <label
@@ -155,7 +162,8 @@ export default function AddClubModal({
                 value={organization}
                 onChange={(event) =>
                   setOrganization(
-                    event.target.value as ClubOrganization
+                    event.target
+                      .value as ClubOrganization
                   )
                 }
                 className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-sm outline-none"
@@ -175,7 +183,7 @@ export default function AddClubModal({
                 htmlFor="status"
                 className="mb-2 block text-sm font-medium"
               >
-                Status
+                Status *
               </label>
 
               <select
@@ -192,6 +200,14 @@ export default function AddClubModal({
                   Interested
                 </option>
 
+                <option value="Applying">
+                  Applying
+                </option>
+
+                <option value="Applied">
+                  Applied
+                </option>
+
                 <option value="Active">
                   Active
                 </option>
@@ -203,6 +219,7 @@ export default function AddClubModal({
             </div>
           </div>
 
+          {/* Category + role */}
           <div className="grid gap-5 sm:grid-cols-2">
             <div>
               <label
@@ -219,7 +236,7 @@ export default function AddClubModal({
                 onChange={(event) =>
                   setCategory(event.target.value)
                 }
-                placeholder="Professional, social..."
+                placeholder="Professional, cultural, social..."
                 className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-sm outline-none transition placeholder:text-zinc-600 focus:border-zinc-600"
               />
             </div>
@@ -239,12 +256,13 @@ export default function AddClubModal({
                 onChange={(event) =>
                   setRole(event.target.value)
                 }
-                placeholder="Member"
+                placeholder="e.g. Member, Analyst, E-Board"
                 className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-sm outline-none transition placeholder:text-zinc-600 focus:border-zinc-600"
               />
             </div>
           </div>
 
+          {/* Instagram */}
           <div>
             <label
               htmlFor="instagram"
@@ -265,6 +283,7 @@ export default function AddClubModal({
             />
           </div>
 
+          {/* Website */}
           <div>
             <label
               htmlFor="website"
@@ -285,6 +304,7 @@ export default function AddClubModal({
             />
           </div>
 
+          {/* Description */}
           <div>
             <label
               htmlFor="description"
@@ -295,7 +315,7 @@ export default function AddClubModal({
 
             <textarea
               id="description"
-              rows={4}
+              rows={3}
               value={description}
               onChange={(event) =>
                 setDescription(event.target.value)
@@ -305,6 +325,28 @@ export default function AddClubModal({
             />
           </div>
 
+          {/* Notes */}
+          <div>
+            <label
+              htmlFor="notes"
+              className="mb-2 block text-sm font-medium"
+            >
+              Notes
+            </label>
+
+            <textarea
+              id="notes"
+              rows={4}
+              value={notes}
+              onChange={(event) =>
+                setNotes(event.target.value)
+              }
+              placeholder="Application details, people to contact, reminders..."
+              className="w-full resize-none rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-sm outline-none transition placeholder:text-zinc-600 focus:border-zinc-600"
+            />
+          </div>
+
+          {/* Actions */}
           <div className="flex justify-end gap-3 border-t border-zinc-800 pt-5">
             <button
               type="button"

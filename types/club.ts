@@ -1,19 +1,24 @@
 export type ClubOrganization = "Baruch" | "Macaulay";
 
 export type ClubStatus =
-  | "Active"
   | "Interested"
+  | "Applying"
+  | "Applied"
+  | "Active"
   | "Inactive";
 
 export type Club = {
   id: string;
   name: string;
   organization: ClubOrganization;
-  category: string;
-  role: string;
   status: ClubStatus;
-  description?: string;
+
+  category?: string;
+  role?: string;
+
   instagram?: string;
   website?: string;
+
+  description?: string;
   notes?: string;
 };
