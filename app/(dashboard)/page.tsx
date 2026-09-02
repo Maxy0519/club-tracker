@@ -11,32 +11,13 @@ import {
 
 import { redirect } from "next/navigation";
 
+import LocalDateTime from "@/components/local-date-time";
+
+import { formatTaskDeadline } from "@/lib/date-time";
 import { createClient } from "@/lib/supabase/server";
 
-function formatEventDate(value: string) {
-  return new Intl.DateTimeFormat(
-    "en-US",
-    {
-      weekday: "short",
-      month: "short",
-      day: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-    }
-  ).format(new Date(value));
-}
-
-function formatTaskDate(value: string) {
-  return new Intl.DateTimeFormat(
-    "en-US",
-    {
-      month: "short",
-      day: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-    }
-  ).format(new Date(value));
-}
+const APP_TIME_ZONE =
+  "America/New_York";
 
 export default async function DashboardPage() {
   const supabase =
@@ -130,21 +111,27 @@ export default async function DashboardPage() {
       ),
   ]);
 
-  if (clubsResult.error) {
+  if (
+    clubsResult.error
+  ) {
     console.error(
       "Error loading clubs:",
       clubsResult.error
     );
   }
 
-  if (tasksResult.error) {
+  if (
+    tasksResult.error
+  ) {
     console.error(
       "Error loading tasks:",
       tasksResult.error
     );
   }
 
-  if (eventsResult.error) {
+  if (
+    eventsResult.error
+  ) {
     console.error(
       "Error loading events:",
       eventsResult.error
@@ -152,18 +139,22 @@ export default async function DashboardPage() {
   }
 
   const clubs =
-    clubsResult.data ?? [];
+    clubsResult.data ??
+    [];
 
   const tasks =
-    tasksResult.data ?? [];
+    tasksResult.data ??
+    [];
 
   const events =
-    eventsResult.data ?? [];
+    eventsResult.data ??
+    [];
 
   const activeClubs =
     clubs.filter(
       (club) =>
-        club.status === "Active"
+        club.status ===
+        "Active"
     ).length;
 
   const applyingClubs =
@@ -191,13 +182,23 @@ export default async function DashboardPage() {
   const openTasks =
     tasks.slice(0, 5);
 
+  /*
+   * Header date is still formatted
+   * server-side, but explicitly in
+   * New York time.
+   */
   const dateLabel =
     new Intl.DateTimeFormat(
       "en-US",
       {
-        weekday: "long",
-        month: "long",
-        day: "numeric",
+        weekday:
+          "long",
+        month:
+          "long",
+        day:
+          "numeric",
+        timeZone:
+          APP_TIME_ZONE,
       }
     ).format(now);
 
@@ -214,7 +215,9 @@ export default async function DashboardPage() {
         </h1>
 
         <p className="mt-2 text-zinc-400">
-          Your Baruch and Macaulay extracurricular hub.
+          Your Baruch and
+          Macaulay
+          extracurricular hub.
         </p>
       </header>
 
@@ -233,7 +236,9 @@ export default async function DashboardPage() {
           </div>
 
           <p className="mt-3 text-3xl font-semibold">
-            {clubs.length}
+            {
+              clubs.length
+            }
           </p>
         </div>
 
@@ -250,7 +255,9 @@ export default async function DashboardPage() {
           </div>
 
           <p className="mt-3 text-3xl font-semibold">
-            {activeClubs}
+            {
+              activeClubs
+            }
           </p>
         </div>
 
@@ -267,7 +274,9 @@ export default async function DashboardPage() {
           </div>
 
           <p className="mt-3 text-3xl font-semibold">
-            {applyingClubs}
+            {
+              applyingClubs
+            }
           </p>
         </div>
 
@@ -284,23 +293,27 @@ export default async function DashboardPage() {
           </div>
 
           <p className="mt-3 text-3xl font-semibold">
-            {tasks.length}
+            {
+              tasks.length
+            }
           </p>
         </div>
       </section>
 
-      {/* Main dashboard area */}
+      {/* Main dashboard */}
       <section className="mt-10 grid gap-8 xl:grid-cols-[1.35fr_1fr]">
         {/* Upcoming Events */}
         <div>
           <div className="mb-4 flex items-center justify-between">
             <div>
               <h2 className="text-xl font-semibold">
-                Upcoming Events
+                Upcoming
+                Events
               </h2>
 
               <p className="mt-1 text-sm text-zinc-500">
-                What&apos;s coming up next.
+                What&apos;s
+                coming up next.
               </p>
             </div>
 
@@ -309,6 +322,7 @@ export default async function DashboardPage() {
               className="flex items-center gap-1 text-sm text-zinc-400 transition hover:text-white"
             >
               View all
+
               <ArrowRight
                 size={15}
               />
@@ -329,34 +343,47 @@ export default async function DashboardPage() {
 
                   return (
                     <div
-                      key={event.id}
+                      key={
+                        event.id
+                      }
                       className="rounded-2xl border border-zinc-800 bg-zinc-900 p-5"
                     >
                       {clubName && (
                         <p className="text-xs text-zinc-500">
-                          {clubName}
+                          {
+                            clubName
+                          }
                         </p>
                       )}
 
                       <h3 className="mt-1 font-semibold">
-                        {event.title}
+                        {
+                          event.title
+                        }
                       </h3>
 
                       <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm text-zinc-400">
                         <div className="flex items-center gap-2">
                           <Clock
-                            size={14}
+                            size={
+                              14
+                            }
                           />
 
-                          {formatEventDate(
-                            event.start_at
-                          )}
+                          <LocalDateTime
+                            value={
+                              event.start_at
+                            }
+                            variant="event"
+                          />
                         </div>
 
                         {event.location && (
                           <div className="flex items-center gap-2">
                             <MapPin
-                              size={14}
+                              size={
+                                14
+                              }
                             />
 
                             {
@@ -373,11 +400,14 @@ export default async function DashboardPage() {
           ) : (
             <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-8 text-center">
               <p className="font-medium">
-                Nothing scheduled
+                Nothing
+                scheduled
               </p>
 
               <p className="mt-2 text-sm text-zinc-500">
-                Add your next club meeting or event.
+                Add your next
+                club meeting
+                or event.
               </p>
 
               <Link
@@ -399,7 +429,9 @@ export default async function DashboardPage() {
               </h2>
 
               <p className="mt-1 text-sm text-zinc-500">
-                Deadlines that need your attention.
+                Deadlines that
+                need your
+                attention.
               </p>
             </div>
 
@@ -408,6 +440,7 @@ export default async function DashboardPage() {
               className="flex items-center gap-1 text-sm text-zinc-400 transition hover:text-white"
             >
               View all
+
               <ArrowRight
                 size={15}
               />
@@ -418,7 +451,10 @@ export default async function DashboardPage() {
           0 ? (
             <div className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900">
               {openTasks.map(
-                (task, index) => {
+                (
+                  task,
+                  index
+                ) => {
                   const clubName =
                     task.club_id
                       ? clubNames.get(
@@ -428,7 +464,9 @@ export default async function DashboardPage() {
 
                   return (
                     <div
-                      key={task.id}
+                      key={
+                        task.id
+                      }
                       className={`p-4 ${
                         index !==
                         openTasks.length -
@@ -464,7 +502,8 @@ export default async function DashboardPage() {
                       {task.due_at && (
                         <p className="mt-3 text-xs text-zinc-500">
                           Due{" "}
-                          {formatTaskDate(
+
+                          {formatTaskDeadline(
                             task.due_at
                           )}
                         </p>
@@ -477,18 +516,20 @@ export default async function DashboardPage() {
           ) : (
             <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-8 text-center">
               <p className="font-medium">
-                You&apos;re all caught up
+                You&apos;re all
+                caught up
               </p>
 
               <p className="mt-2 text-sm text-zinc-500">
-                No open tasks right now.
+                No open tasks
+                right now.
               </p>
             </div>
           )}
         </div>
       </section>
 
-      {/* Application pipeline */}
+      {/* Application Pipeline */}
       <section className="mt-10">
         <div className="mb-4 flex items-center justify-between">
           <div>
@@ -497,7 +538,9 @@ export default async function DashboardPage() {
             </h2>
 
             <p className="mt-1 text-sm text-zinc-500">
-              Where your applications currently stand.
+              Where your
+              applications
+              currently stand.
             </p>
           </div>
 
@@ -506,6 +549,7 @@ export default async function DashboardPage() {
             className="flex items-center gap-1 text-sm text-zinc-400 transition hover:text-white"
           >
             Manage clubs
+
             <ArrowRight
               size={15}
             />
@@ -519,29 +563,37 @@ export default async function DashboardPage() {
             "Applied",
             "Active",
             "Inactive",
-          ].map((status) => {
-            const count =
-              clubs.filter(
-                (club) =>
-                  club.status ===
-                  status
-              ).length;
+          ].map(
+            (status) => {
+              const count =
+                clubs.filter(
+                  (club) =>
+                    club.status ===
+                    status
+                ).length;
 
-            return (
-              <div
-                key={status}
-                className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4"
-              >
-                <p className="text-sm text-zinc-400">
-                  {status}
-                </p>
+              return (
+                <div
+                  key={
+                    status
+                  }
+                  className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4"
+                >
+                  <p className="text-sm text-zinc-400">
+                    {
+                      status
+                    }
+                  </p>
 
-                <p className="mt-2 text-2xl font-semibold">
-                  {count}
-                </p>
-              </div>
-            );
-          })}
+                  <p className="mt-2 text-2xl font-semibold">
+                    {
+                      count
+                    }
+                  </p>
+                </div>
+              );
+            }
+          )}
         </div>
       </section>
     </div>

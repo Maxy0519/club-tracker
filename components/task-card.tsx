@@ -8,6 +8,8 @@ import {
 
 import { Task } from "@/types/task";
 
+import { formatTaskDeadline } from "@/lib/date-time";
+
 type TaskCardProps = {
   task: Task;
 
@@ -19,20 +21,6 @@ type TaskCardProps = {
     task: Task
   ) => Promise<void>;
 };
-
-function formatDueDate(
-  value: string
-) {
-  return new Intl.DateTimeFormat(
-    undefined,
-    {
-      month: "short",
-      day: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-    }
-  ).format(new Date(value));
-}
 
 export default function TaskCard({
   task,
@@ -119,7 +107,7 @@ export default function TaskCard({
                     ? "Overdue · "
                     : ""}
 
-                  {formatDueDate(
+                  {formatTaskDeadline(
                     task.dueAt
                   )}
                 </div>
