@@ -294,10 +294,12 @@ club-tracker/
 │   ├── edit-event-modal.tsx
 │   ├── event-card.tsx
 │   ├── events-view.tsx
+│   ├── local-date-time.tsx
 │   ├── task-card.tsx
 │   └── tasks-view.tsx
 │
 ├── lib/
+│   ├── date-time.ts
 │   └── supabase/
 │       ├── client.ts
 │       ├── proxy.ts
@@ -325,6 +327,12 @@ club-tracker/
 
 ## Local Development
 
+### Prerequisites
+
+- Node.js 22 or later
+- npm
+- A Supabase project with the migrations in `supabase/migrations/` applied
+
 ### 1. Clone the repository
 
 ```bash
@@ -335,7 +343,7 @@ cd club-tracker
 ### 2. Install dependencies
 
 ```bash
-npm install
+npm ci
 ```
 
 ### 3. Configure environment variables
@@ -379,6 +387,8 @@ npm run build
 ```
 
 Both should complete successfully.
+
+There is currently no automated test suite or `npm test` script. Until one is added, linting and a production build are the repository's required local checks.
 
 ---
 
@@ -486,6 +496,12 @@ These are intentionally outside the initial V1 scope.
 The goal of Club Tracker is to remain simple enough to use every day while being flexible enough to grow as my involvement at Baruch and Macaulay changes.
 
 The application started as a personal club application tracker and can evolve into a broader extracurricular management workspace over time.
+
+---
+
+## AI Collaboration
+
+OpenAI ChatGPT and Codex have assisted with planning, debugging, documentation, and implementation. AI-generated suggestions are reviewed before they are incorporated; **Max Yang remains the project owner and maintainer and is responsible for the project's direction and final changes.**
 
 ---
 
